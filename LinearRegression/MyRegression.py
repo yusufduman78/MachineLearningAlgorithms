@@ -84,6 +84,13 @@ class MyLinearRegression:
                 self.cost_history.append(cost)
                 print(f"Epoch {i}: Cost = {cost}")
 
+    def show_cost_graphic(self):
+        plt.plot(self.cost_history)
+        plt.xlabel("Epochs")
+        plt.ylabel("Cost")
+        plt.title("Cost and Epoch Relation")
+        plt.grid()
+        plt.show()
 
 a = MyLinearRegression()
 print("Fit started")
@@ -93,3 +100,6 @@ print("finished")
 print("our predicts", a.predict(X))
 
 print("real values", y)
+
+new_data = np.array([[30, 9, 25]])
+print("Tahmin:", a.predict(new_data))
