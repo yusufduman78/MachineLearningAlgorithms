@@ -1,7 +1,7 @@
 import math
-
 import numpy as np
 import matplotlib.pyplot as plt
+from itertools import combinations_with_replacement
 
 X = np.array([
     [10, 20, 15],
@@ -28,32 +28,52 @@ y = np.array([
     73.9
 ])
 
+class Scaler:
+    def __init__(self):
+        self.mean = 0
+        self.std = 1
+
+    def fit(self, X):
+        self.mean = np.mean(X, axis=0)
+        self.std = np.std(X, axis=0)
+
+    def transform(self, X):
+        return (X - self.mean) / self.std
+
+    def fit_transform(self, X):
+        self.fit(X)
+        return self.transform(X)
 
 
 class MyLinearRegression:
-    def __init__(self, learning_rate=0.0005, epochs=100000):
+    def __init__(self, learning_rate=0.0005, epochs=100000, degree=1):
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.cost_history = []
+        self.degree = degree
 
-    def fit(self,X,y, epochs = None, learning_rate = None):
+    def fit(self, X, y, epochs=None, learning_rate=None, degree=None):
         if epochs is None:
             epochs = self.epochs
         if learning_rate is None:
             learning_rate = self.learning_rate
+        if degree is not None:
+            self.degree = degree
+
+        if self.degree > 1:
+            X = self.generate_polynomial_features(X, self.degree)
+
         self.w = np.zeros(X.shape[1])
         self.b = 0
         self.gradient_descent(X, y, epochs, learning_rate)
 
-    def predict(self,X):
+    def predict(self, X):
         return np.dot(X, self.w) + self.b
 
-
-    def compute_cost(self,X,y):
+    def compute_cost(self, X, y):
         y_pred = self.predict(X)
         m = X.shape[0]
-        total_cost = np.sum((y_pred - y)**2) / (2*m)
-
+        total_cost = np.sum((y_pred - y)**2) / (2 * m)
         return total_cost
 
     def compute_gradient(self, X, y, y_pred):
@@ -92,14 +112,53 @@ class MyLinearRegression:
         plt.grid()
         plt.show()
 
-a = MyLinearRegression()
-print("Fit started")
-a.fit(X,y)
-print("finished")
+    def evaluate(self, X_test, y_test):
+        y_predict = self.predict(X_test)
+        m = X_test.shape[0]
+        error = y_test - y_predict
+        mse = np.sum((error) ** 2) / m
+        rmse = np.sqrt(mse)
+        mae = np.sum(np.absolute(error)) / m
+        r2 = 1 - (np.sum(error ** 2) / np.sum((y_test - np.mean(y_test)) ** 2))
 
-print("our predicts", a.predict(X))
+        print("\n Mean Squared Error: ", mse)
+        print(" Root Mean Squared Error: ", rmse)
+        print(" Mean Absolute Error: ", mae)
+        print(" R-Squared: ", r2)
 
-print("real values", y)
+        return {"mse": mse, "rmse": rmse, "mae": mae, "r2": r2}
 
-new_data = np.array([[30, 9, 25]])
-print("Tahmin:", a.predict(new_data))
+    def generate_polynomial_features(self, X, degree):
+        n_features = X.shape[1]
+        new_columns = []
+        for d in range(1, degree + 1):
+            combs = list(combinations_with_replacement(range(n_features), d))
+            for comb in combs:
+                new_column = np.prod(X[:, comb], axis=1)
+                new_columns.append(new_column.reshape(-1, 1))
+        return np.hstack(new_columns)
+
+split_index = int(len(X) * 0.8)
+
+# Veriyi ölçeklendirme (standartlaştırma)
+scaler = Scaler()
+X_scaled = scaler.transform(X)
+
+X_train = X_scaled[:split_index]
+X_test = X_scaled[split_index:]
+y_train = y[:split_index]
+y_test = y[split_index:]
+
+for d in [1, 2]:
+    print(f"\n==== DEGREE {d} ====")
+    model = MyLinearRegression(degree=d)
+
+    X_train_poly = model.generate_polynomial_features(X_train, d)
+    X_test_poly = model.generate_polynomial_features(X_test, d)
+
+    model.fit(X_train_poly, y_train)
+    y_pred = model.predict(X_test_poly)
+
+    print("Our predicts:", y_pred)
+    print("Real values:", y_test)
+    model.evaluate(X_test_poly, y_test)
