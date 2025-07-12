@@ -44,6 +44,34 @@ class Scaler:
         self.fit(X)
         return self.transform(X)
 
+class MyPolynomialFeatures:
+    def __init__(self,degree = 1, bias_including = False):
+        self.degree = degree
+        self.bias_including = bias_including
+
+    def fit(self,X):
+        self.n_features = X.shape[1]
+        self.combinations_ = []
+        for d in range(1, self.degree + 1):
+            combs = list(combinations_with_replacement(range(self.n_features), d))
+            self.combinations_.extend(combs)
+
+
+    def transform(self,X):
+        new_columns = []
+        for comb in self.combinations_:
+            new_col = np.prod(X[:,comb], axis = 1)
+            new_columns.append(new_col.reshape(-1,1))#reshape(-1,1) -1 -> auto count row 1-> each row one column namely column vector
+        result = np.hstack(new_columns)
+        if self.bias_including:
+            bias_col = np.ones((X.shape[0], 1)) # (X.shape[0], 1) is tuple X.shape is row 1 is column namely X's row counts and one new column
+            result = np.hstack((bias_col, result))
+        return result
+
+    def fit_transform(self,X):
+        self.fit(X)
+        return self.transform(X)
+
 
 class MyLinearRegression:
     def __init__(self, learning_rate=0.0005, epochs=100000, degree=1):
@@ -51,6 +79,7 @@ class MyLinearRegression:
         self.epochs = epochs
         self.cost_history = []
         self.degree = degree
+
 
     def fit(self, X, y, epochs=None, learning_rate=None, degree=None):
         if epochs is None:
@@ -67,11 +96,13 @@ class MyLinearRegression:
         self.b = 0
         self.gradient_descent(X, y, epochs, learning_rate)
 
-    def predict(self, X):
+    def predict(self, X, is_training=False):
+        if self.degree > 1 and not is_training:
+            X = self.generate_polynomial_features(X, self.degree)
         return np.dot(X, self.w) + self.b
 
     def compute_cost(self, X, y):
-        y_pred = self.predict(X)
+        y_pred = self.predict(X, is_training = True)
         m = X.shape[0]
         total_cost = np.sum((y_pred - y)**2) / (2 * m)
         return total_cost
@@ -95,7 +126,7 @@ class MyLinearRegression:
     def gradient_descent(self, X, y, iters, learning_rate):
         self.cost_history = []
         for i in range(iters):
-            y_pred = self.predict(X)
+            y_pred = self.predict(X, is_training=True)
             dj_dw, dj_db = self.compute_gradient(X, y, y_pred)
             self.w = self.w - learning_rate * dj_dw
             self.b = self.b - learning_rate * dj_db
@@ -142,23 +173,19 @@ split_index = int(len(X) * 0.8)
 
 # Veriyi ölçeklendirme (standartlaştırma)
 scaler = Scaler()
-X_scaled = scaler.transform(X)
+X_scaled = scaler.fit_transform(X)
 
 X_train = X_scaled[:split_index]
 X_test = X_scaled[split_index:]
 y_train = y[:split_index]
 y_test = y[split_index:]
 
-for d in [1, 2]:
-    print(f"\n==== DEGREE {d} ====")
-    model = MyLinearRegression(degree=d)
 
-    X_train_poly = model.generate_polynomial_features(X_train, d)
-    X_test_poly = model.generate_polynomial_features(X_test, d)
+model = MyLinearRegression(degree=2)
 
-    model.fit(X_train_poly, y_train)
-    y_pred = model.predict(X_test_poly)
+model.fit(X_train,y_train)
 
-    print("Our predicts:", y_pred)
-    print("Real values:", y_test)
-    model.evaluate(X_test_poly, y_test)
+y_pred = model.predict(X_test)
+
+print("predict: ",y_pred)
+print("\n real value", y_test)
