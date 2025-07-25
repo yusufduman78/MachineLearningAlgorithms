@@ -4,7 +4,7 @@ Welcome to my personal repository containing implementations of various machine 
 
 ## 🚀 Project Overview
 
-### 1. Linear Regression Implementation
+### 1. Linear Regression Implementation 🔍
 
 A from-scratch implementation of a Linear Regression model without relying on external machine learning libraries like scikit-learn.
 
@@ -17,21 +17,21 @@ A from-scratch implementation of a Linear Regression model without relying on ex
 - **Purpose:**  
   Understand the inner workings of Linear Regression by building it from the ground up.
 
-### 2. Exploratory Data Analysis (EDA) Projects
+### 2. Exploratory Data Analysis (EDA) Projects 📊
 
 Projects focused on data exploration and preliminary machine learning modeling on different datasets.
 
 - **Heart Disease Analysis:**  
   - **Notebook:** `Exploratory Data Analysis/heart_disease.ipynb`  
-  - **Dataset:** `datasets/heart_2020_cleaned.csv`  
+  - **Dataset:** `datasets/heart_2020_cleaned.csv` (~XX KB)  
   - **Description:** Data cleaning, visualization, feature engineering, and predictive modeling (Logistic Regression, Decision Trees, Random Forest) to assess heart disease risk.
 
 - **Rental Price Prediction:**  
   - **Notebook:** `Exploratory Data Analysis/rent_price.ipynb`  
-  - **Dataset:** `datasets/rent_price_dataset_buca.csv`  
+  - **Dataset:** `datasets/rent_price_dataset_buca.csv` (~XX KB)  
   - **Description:** Analysis and modeling of rental prices in the Buca area using regression algorithms like Linear Regression and KNN Regressor.
 
-### 3. Datasets
+### 3. Datasets 📁
 
 Raw datasets used across the projects are stored here for easy access and reproducibility.
 
@@ -68,7 +68,8 @@ Raw datasets used across the projects are stored here for easy access and reprod
 
 ## 🤝 Contributions
 
-Contributions are welcome! Feel free to fork the repository, create a branch, and open a pull request. For any issues or feature requests, please use the Issues tab.
+Contributions are welcome! Please feel free to fork the repository, create a branch, and open a pull request.  
+Before opening a new issue, kindly check if it has already been reported.
 
 ## 📄 License
 
