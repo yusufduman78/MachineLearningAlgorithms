@@ -23,12 +23,12 @@ Projects focused on data exploration and preliminary machine learning modeling o
 
 - **Heart Disease Analysis:**  
   - **Notebook:** `Exploratory Data Analysis/heart_disease.ipynb`  
-  - **Dataset:** `datasets/heart_2020_cleaned.csv` (~XX KB)  
+  - **Dataset:** `datasets/heart_2020_cleaned.csv` (~24 MB)  
   - **Description:** Data cleaning, visualization, feature engineering, and predictive modeling (Logistic Regression, Decision Trees, Random Forest) to assess heart disease risk.
 
 - **Rental Price Prediction:**  
   - **Notebook:** `Exploratory Data Analysis/rent_price.ipynb`  
-  - **Dataset:** `datasets/rent_price_dataset_buca.csv` (~XX KB)  
+  - **Dataset:** `datasets/rent_price_dataset_buca.csv` (~5 KB)  
   - **Description:** Analysis and modeling of rental prices in the Buca area using regression algorithms like Linear Regression and KNN Regressor.
 
 ### 3. Datasets 📁
