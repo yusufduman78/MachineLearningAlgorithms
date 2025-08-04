@@ -37,6 +37,8 @@ Raw datasets used across the projects are stored here for easy access and reprod
 
 - `datasets/heart_2020_cleaned.csv` — Cleaned heart disease dataset  
 - `datasets/rent_price_dataset_buca.csv` — Rental price dataset from Buca
+- `datasets/train.csv` — MNIST train dataset
+- `datasets/test.csv` — MNIST test dataset 
 
 ### 4. Deep Learning 🔍
 Implementation of a Neural Network model that predicts MNIST data from scratch using Numpy and Pandas, without the need for deep learning libraries.
