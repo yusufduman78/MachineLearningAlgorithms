@@ -65,7 +65,7 @@ Implementation of a Neural Network model that predicts MNIST data from scratch u
     pip install numpy pandas matplotlib seaborn scikit-learn jupyter
     ```
 
-3. Launch Jupyter Notebook for EDA projects:
+3. Launch Jupyter Notebook for EDA and Deep Learning projects:
     ```bash
     jupyter notebook
     ```
