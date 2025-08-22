@@ -82,6 +82,13 @@ class CNN(nn.Module):
         x = self.fc3(x)
         return x
 
+def loss_and_optimizer(model,lr = 0.001):
+
+    lossf = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(),lr=lr)
+
+    return lossf,optimizer
+
 # %% train
 
 
