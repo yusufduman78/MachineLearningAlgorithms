@@ -90,13 +90,29 @@ def loss_and_optimizer(model,lr = 0.001):
     return lossf,optimizer
 
 # %% train
-
-
-
-
-
-
-
+def train_model(model,trainloader,lossf,optimizer,epochs = 60):
+    model.train()
+    losses = []
+    for epoch in range(epochs):
+        running_loss = 0.0
+        for images,labels in trainloader:
+            images,labels = images.to(device),labels.to(device)
+            optimizer.zero_grad()
+            outputs = model(images)
+            loss = lossf(outputs,labels)
+            loss.backward()
+            optimizer.step()
+            running_loss += loss.item()
+        avg_loss = running_loss/len(trainloader)
+        print(f"Epoch: {epoch+1} / {epochs}, Loss: {avg_loss:.4f}")
+        losses.append(avg_loss)
+    plt.figure()
+    plt.plot(range(1,epochs+1),losses,marker="o",linestyle="-",label="Train Loss")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.title("Train Loss")
+    plt.legend()
+    plt.show()
 # %% test
 
 
