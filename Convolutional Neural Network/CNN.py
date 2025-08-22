@@ -6,15 +6,13 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
 
-# %% device choice
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# %% dataset prepare and processing
 
 transform = transforms.Compose([
     transforms.RandomHorizontalFlip(),
-    transforms.RandomRotation(degrees=35),
+    transforms.RandomRotation(degrees=15),
     transforms.RandomCrop(size=32,padding=4),
     transforms.ToTensor(),
     transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))
@@ -23,13 +21,12 @@ transform = transforms.Compose([
 trainset = torchvision.datasets.CIFAR10(root="../datasets",train=True,transform=transform,download=True)
 testset = torchvision.datasets.CIFAR10(root="../datasets",train=False,transform=transform,download=True)
 
-trainloader = torch.utils.data.DataLoader(trainset,batch_size=32,shuffle=True)
-testloader = torch.utils.data.DataLoader(testset,batch_size=32,shuffle=False)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True, num_workers=2, pin_memory=True)
+testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=2, pin_memory=True)
 
 
 
 
-# %% visualizing (optional)
 
 def get_sample_image(dataset):
     data_iter = iter(dataset)
@@ -52,9 +49,7 @@ def visualize(dataset, iters):
         plt.axis("off")
     plt.show()
 
-visualize(trainloader,4)
 
-# %% model building and loss,optimizer
 
 class CNN(nn.Module):
     def __init__(self):
@@ -65,10 +60,10 @@ class CNN(nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2,stride=2)
         self.conv2 = nn.Conv2d(in_channels=32,out_channels=64,kernel_size=3,padding=1)
         self.bn2 = nn.BatchNorm2d(64)
-        self.dropout1 = nn.Dropout2d(0.2)
+        self.dropout1 = nn.Dropout2d(0.1)
         self.conv3 = nn.Conv2d(in_channels=64,out_channels=128,kernel_size=3,padding=1)
         self.bn3 = nn.BatchNorm2d(128)
-        self.dropout2 = nn.Dropout(0.4)
+        self.dropout2 = nn.Dropout(0.2)
         self.fc1 = nn.Linear(128*4*4,128)
         self.fc2 = nn.Linear(128,72)
         self.fc3 = nn.Linear(72,10)
@@ -82,18 +77,18 @@ class CNN(nn.Module):
         x = self.fc3(x)
         return x
 
-def loss_and_optimizer(model,lr = 0.001):
+def loss_and_optimizer_scheduler(model,lr = 0.001,step_size = 20,gamma = 0.5):
 
     lossf = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(),lr=lr)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma)
 
-    return lossf,optimizer
+    return lossf,optimizer,scheduler
 
-# %% train
-def train_model(model,trainloader,lossf,optimizer,epochs = 60):
-    model.train()
+def train_model(model,trainloader,lossf,optimizer,scheduler,epochs = 60):
     losses = []
     for epoch in range(epochs):
+        model.train()
         running_loss = 0.0
         for images,labels in trainloader:
             images,labels = images.to(device),labels.to(device)
@@ -103,6 +98,7 @@ def train_model(model,trainloader,lossf,optimizer,epochs = 60):
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
+        scheduler.step()
         avg_loss = running_loss/len(trainloader)
         print(f"Epoch: {epoch+1} / {epochs}, Loss: {avg_loss:.4f}")
         losses.append(avg_loss)
@@ -113,7 +109,7 @@ def train_model(model,trainloader,lossf,optimizer,epochs = 60):
     plt.title("Train Loss")
     plt.legend()
     plt.show()
-# %% test
+
 def test_model(model,dataset):
     model.eval()
     correct = 0
@@ -126,3 +122,11 @@ def test_model(model,dataset):
             total += labels.size(0)
             correct += (predict == labels).sum().item()
         print(f"Accuracy: {100*correct/total:.2f} %")
+
+
+if __name__ == "__main__":
+    visualize(trainloader,5)
+    model = CNN().to(device)
+    lossf,optimizer,scheduler = loss_and_optimizer_scheduler(model)
+    train_model(model,trainloader,lossf,optimizer,scheduler)
+    test_model(model,testloader)
