@@ -31,10 +31,28 @@ testloader = torch.utils.data.DataLoader(testset,batch_size=32,shuffle=False)
 
 # %% visualizing (optional)
 
+def get_sample_image(dataset):
+    data_iter = iter(dataset)
+    images, labels = next(data_iter)
+    return images, labels
 
 
+def visualize(dataset, iters):
+    images, labels = get_sample_image(dataset)
+    plt.figure(figsize=(3 * iters, 3))
+    for i in range(iters):
+        img = images[i]
+        img = img / 2 + 0.5
+        np_img = img.numpy()
+        np_img = np.transpose(np_img, (1, 2, 0))
 
+        plt.subplot(1, iters, i + 1)
+        plt.imshow(np_img)
+        plt.title(f"Label: {labels[i]}")
+        plt.axis("off")
+    plt.show()
 
+visualize(trainloader,4)
 
 # %% model building and loss,optimizer
 
