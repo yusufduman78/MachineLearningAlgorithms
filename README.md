@@ -8,7 +8,7 @@ Welcome to my personal repository containing implementations of various machine 
 
 A from-scratch implementation of a Linear Regression model without relying on external machine learning libraries like scikit-learn.
 
-- **Location:** `MyRegression/MyRegression.py`  
+- **Location:** `LinearRegression/MyRegression.py`  
 - **Features:**  
   - Custom Linear Regression class  
   - Feature scaling support  
@@ -37,7 +37,19 @@ Raw datasets used across the projects are stored here for easy access and reprod
 
 - `datasets/heart_2020_cleaned.csv` — Cleaned heart disease dataset  
 - `datasets/rent_price_dataset_buca.csv` — Rental price dataset from Buca
+- `datasets/train.csv` — MNIST train dataset
+- `datasets/test.csv` — MNIST test dataset 
 
+### 4. Deep Learning 🔍
+Implementation of a Neural Network model that predicts MNIST data from scratch using Numpy and Pandas, without the need for deep learning libraries.
+
+- **Location:** `deepLearning/neuralNetwork.ipynb`  
+- **Features:**  
+  - Custom Neural Network  
+  - Batch Gradient Descent  
+  - High Accuracy  
+- **Purpose:**  
+  To understand the logic of deep learning and artificial neural networks by building a neural network from scratch.
 ## 🛠 Installation & Usage
 
 1. Clone this repository:
@@ -55,7 +67,7 @@ Raw datasets used across the projects are stored here for easy access and reprod
     pip install numpy pandas matplotlib seaborn scikit-learn jupyter
     ```
 
-3. Launch Jupyter Notebook for EDA projects:
+3. Launch Jupyter Notebook for EDA and Deep Learning projects:
     ```bash
     jupyter notebook
     ```
@@ -63,7 +75,7 @@ Raw datasets used across the projects are stored here for easy access and reprod
 
 4. Run the linear regression script directly:
     ```bash
-    python MyRegression/MyRegression.py
+    python LinearRegression/MyRegression.py
     ```
 
 ## 🤝 Contributions
