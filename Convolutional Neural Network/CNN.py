@@ -114,6 +114,15 @@ def train_model(model,trainloader,lossf,optimizer,epochs = 60):
     plt.legend()
     plt.show()
 # %% test
-
-
-
+def test_model(model,dataset):
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for images,labels in dataset:
+            images,labels = images.to(device),labels.to(device)
+            outputs = model(images)
+            _, predict = torch.max(outputs, 1)
+            total += labels.size(0)
+            correct += (predict == labels).sum().item()
+        print(f"Accuracy: {100*correct/total:.2f} %")
